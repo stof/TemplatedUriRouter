@@ -11,7 +11,9 @@
 
 namespace Hautelook\TemplatedUriRouter\Tests\Routing\Generator;
 
+use Hautelook\TemplatedUriRouter\Routing\Generator\Rfc6570Generator;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -54,6 +56,25 @@ class Rfc6570GeneratorTest extends \PHPUnit_Framework_TestCase
             array('/foo/foobar/{?bar%5B%5D*}', array('foo' => 'foobar', 'bar' => array())),
             array('/foo/{placeholder}/{?bar}', array('foo' => '{placeholder}', 'bar' => 'barbar')),
         );
+    }
+
+    public function testPlaceholderInStrictParameter()
+    {
+        $routes = new RouteCollection();
+
+        $routes->add('foo', new Route(
+            '/foo/{foo}/',
+            array(
+                'foo' => '123',
+            ),
+            array(
+                'foo' => '\d+',
+            )
+        ));
+
+        $generator = new Rfc6570Generator($routes, new RequestContext());
+
+        $this->assertEquals('/foo/{placeholder}/{?bar}', $generator->generate('foo', array('foo' => '{placeholder}', 'bar' => 'barbar')));
     }
 
     /**
