@@ -169,7 +169,10 @@ class Rfc6570Generator extends UrlGenerator implements UrlGeneratorInterface, Co
         return $url;
     }
 
-    private function isPlaceHolder($param) {
-        return (substr($param, 0, 1 ) == '{' && substr($param, -1 ) == '}');
+    private function isPlaceHolder($param)
+    {
+        $length = strlen($param);
+
+        return $length > 2 && '{' === $param[0] && '}' === $param[$length - 1];
     }
 }
